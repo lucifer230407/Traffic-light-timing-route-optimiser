@@ -70,4 +70,67 @@ class RoadGraph {
         }
         return nearest;
     }
+
+    getEdgeCost(from, to, arrivalTime) {
+        const neighbors = this.getNeighbors(from);
+        let baseCost = Infinity;
+        for (const edge of neighbors) {
+            if (edge.to === to) {
+                baseCost = edge.weight;
+                break;
+            }
+        }
+        if (baseCost === Infinity) return Infinity;
+
+        const tl = this.trafficLights[to];
+        if (tl) {
+            const waitTime = this.calculateRedWait(arrivalTime, tl);
+            return baseCost + waitTime;
+        }
+        return baseCost;
+    }
+
+    calculateRedWait(arrivalTime, trafficLight) {
+        if (trafficLight.isManual && trafficLight.manualState) {
+            if (trafficLight.manualState === 'green') return 0;
+            if (trafficLight.manualState === 'yellow') return trafficLight.cycle[1];
+            return Infinity;
+        }
+
+        const cycle = trafficLight.cycle;
+        const totalCycle = cycle.reduce((a, b) => a + b, 0);
+        const timeInCycle = (arrivalTime + (trafficLight.phaseOffset || 0)) % totalCycle;
+        let cumulative = 0;
+
+        for (let i = 0; i < cycle.length; i++) {
+            if (timeInCycle < cumulative + cycle[i]) {
+                if (i === 0) return 0;
+                return cumulative + cycle[i] - timeInCycle;
+            }
+            cumulative += cycle[i];
+        }
+        return 0;
+    }
+
+    getCurrentState(trafficLight, simTime) {
+        if (trafficLight.isManual && trafficLight.manualState) {
+            return { state: trafficLight.manualState, timeRemaining: 999 };
+        }
+        const cycle = trafficLight.cycle;
+        const totalCycle = cycle.reduce((a, b) => a + b, 0);
+        const timeInCycle = (simTime + (trafficLight.phaseOffset || 0)) % totalCycle;
+        let cumulative = 0;
+
+        for (let i = 0; i < cycle.length; i++) {
+            if (timeInCycle < cumulative + cycle[i]) {
+                let state;
+                if (i === 0) state = 'green';
+                else if (i % 2 === 1) state = 'yellow';
+                else state = 'red';
+                return { state, timeRemaining: Math.round((cumulative + cycle[i] - timeInCycle) * 10) / 10 };
+            }
+            cumulative += cycle[i];
+        }
+        return { state: 'green', timeRemaining: 0 };
+    }
 }

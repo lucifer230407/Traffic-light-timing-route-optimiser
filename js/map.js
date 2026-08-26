@@ -111,6 +111,73 @@ const MapManager = {
         }
     },
 
+    drawRoute(coordinates, trafficLightsOnRoute) {
+        this.clearRoute();
+        if (!coordinates || !coordinates.length) return;
+
+        this.routePolyline = L.polyline(coordinates, {
+            color: '#00f2fe',
+            weight: 6,
+            opacity: 0.9,
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(this.map);
+
+        this.map.fitBounds(this.routePolyline.getBounds(), { padding: [40, 40] });
+
+        if (trafficLightsOnRoute) {
+            for (const tl of trafficLightsOnRoute) {
+                const icon = L.divIcon({
+                    className: '',
+                    html: '<div class="signal-marker-badge" style="background:#f59e0b;color:#0f172a;"><i class="ri-traffic-light-line"></i></div>',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                });
+                const m = L.marker([tl.lat, tl.lon], { icon }).addTo(this.map)
+                    .bindPopup(`Signal Node: ${tl.id}`);
+                this.routeMarkers.push(m);
+            }
+        }
+    },
+
+    updateVehicleMarkers(vehicles) {
+        if (!vehicles) return;
+        const activeIds = new Set();
+        for (const v of vehicles) {
+            activeIds.add(v.id);
+            if (this.vehicleMarkers[v.id]) {
+                this.vehicleMarkers[v.id].setLatLng([v.lat, v.lon]);
+            } else {
+                const icon = L.divIcon({
+                    className: '',
+                    html: '<div style="width:8px;height:8px;background:#f59e0b;border-radius:50%;box-shadow:0 0 6px #f59e0b;"></div>',
+                    iconSize: [8, 8],
+                    iconAnchor: [4, 4]
+                });
+                this.vehicleMarkers[v.id] = L.marker([v.lat, v.lon], { icon }).addTo(this.map)
+                    .bindPopup(`Vehicle: ${v.id}<br>Speed: ${v.speed} km/h`);
+            }
+        }
+        for (const id of Object.keys(this.vehicleMarkers)) {
+            if (!activeIds.has(id)) {
+                this.map.removeLayer(this.vehicleMarkers[id]);
+                delete this.vehicleMarkers[id];
+            }
+        }
+    },
+
+    createSimVehicleMarker(lat, lon) {
+        if (this.simVehicleMarker) this.map.removeLayer(this.simVehicleMarker);
+        const icon = L.divIcon({
+            className: '',
+            html: '<div class="vehicle-playback-marker"><i class="ri-car-fill"></i></div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        this.simVehicleMarker = L.marker([lat, lon], { icon }).addTo(this.map);
+        return this.simVehicleMarker;
+    },
+
     panTo(lat, lon) {
         if (this.map) this.map.panTo([lat, lon]);
     }

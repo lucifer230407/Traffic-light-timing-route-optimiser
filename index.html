@@ -317,6 +317,55 @@
         </footer>
     </div>
 
+    <!-- ======================== AUTH DIALOG ======================== -->
+    <dialog id="auth-dialog" class="glass-dialog">
+        <div class="dialog-content">
+            <button class="dialog-close" id="btn-close-auth">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Sign In</button>
+                <button class="auth-tab" data-tab="signup">Create Account</button>
+            </div>
+            <form id="form-login" class="auth-form active">
+                <h3>Welcome back to TraffIQ</h3>
+                <p class="auth-desc">Sign in to access your traffic control dashboard.</p>
+                <div class="input-group">
+                    <label for="login-email">Email</label>
+                    <input type="text" id="login-email" placeholder="operator@traffiq.io" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me" checked> Remember session
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                <p class="form-error" id="login-error" role="alert"></p>
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            </form>
+            <form id="form-signup" class="auth-form">
+                <h3>Create TraffIQ Account</h3>
+                <p class="auth-desc">Start optimizing traffic signals with smart routing.</p>
+                <div class="input-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Your name" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="At least 6 characters" minlength="6" required>
+                </div>
+                <p class="form-error" id="signup-error" role="alert"></p>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+        </div>
+    </dialog>
+
     <!-- ======================== DASHBOARD ======================== -->
     <div id="app-dashboard" class="view-section">
         <header class="app-header">

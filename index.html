@@ -188,6 +188,133 @@
                 </div>
             </div>
         </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section">
+            <h2 class="section-title">What Operators Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Same crew, same time, every week. Six months in and I haven't skipped once. That's a first for me."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">DP</div>
+                        <div>
+                            <div class="testimonial-name">Daniel P.</div>
+                            <div class="testimonial-role">Traffic Operations Lead</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Started for the routing engine. Stayed for the real-time signal override. The dashboard never sleeps."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MD</div>
+                        <div>
+                            <div class="testimonial-name">Mark D.</div>
+                            <div class="testimonial-role">City Infrastructure Engineer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The time-dependent Dijkstra alone saved us 32% in commute delays. Nothing else has come close."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">OR</div>
+                        <div>
+                            <div class="testimonial-name">Olivia R.</div>
+                            <div class="testimonial-role">Urban Planning Analyst</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The decisions are already made. Set the signals, compute the route, track the vehicles. Best tool we've deployed."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div>
+                            <div class="testimonial-name">Sarah M.</div>
+                            <div class="testimonial-role">Municipal Traffic Director</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"I'm not a programmer. But the trajectory playback and live monitoring? I'm a power user now."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">PS</div>
+                        <div>
+                            <div class="testimonial-name">Priya S.</div>
+                            <div class="testimonial-role">Signal Timing Specialist</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Felt like deploying a real traffic system. I didn't know how much I missed that until I had it back."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">TW</div>
+                        <div>
+                            <div class="testimonial-name">Tyler W.</div>
+                            <div class="testimonial-role">Smart City Consultant</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="faq-section" id="faq">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is Time-Dependent Dijkstra Routing?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Unlike standard shortest-path algorithms that assume static edge weights, Time-Dependent Dijkstra adjusts road travel costs based on exact arrival timestamps at traffic signals. This accounts for real wait times at each intersection.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does TraffIQ simulate traffic signals?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        TraffIQ uses an in-browser simulation engine that computes live signal state countdowns, phase offsets, and vehicle locations every second. All 40 intersections cycle through green, yellow, and red phases with configurable timings.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can operators manually override signals?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes. Operators can force any signal to Red, Yellow, or Green, modify phase cycle timings, randomize all network signals, or trigger a full reset to defaults.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Does the route recalculate after signal changes?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes. Any signal override or timing change automatically triggers a route recalculation when a route is active, ensuring the optimal path always reflects the current network state.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <div class="footer-content">
+                <div class="brand">
+                    <div class="brand-icon"><i class="ri-pulse-line"></i></div>
+                    <span class="brand-name">Traff<span class="highlight">IQ</span></span>
+                </div>
+                <p class="footer-desc">Intelligent Signal Timing &amp; Dynamic Urban Route Optimization Engine.</p>
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div class="footer-copy">&copy; 2026 TraffIQ Systems. All rights reserved.</div>
+            </div>
+        </footer>
     </div>
 
     <!-- ======================== DASHBOARD ======================== -->

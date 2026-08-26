@@ -180,4 +180,50 @@ class TimeDependentRouter {
 
         return A;
     }
+
+    calculateRouteDetails(path, currentTime = 0) {
+        if (!path.length) {
+            return { totalDistance: 0, totalTime: 0, edges: [], trafficLightsHit: [] };
+        }
+
+        let totalDistance = 0;
+        let totalTime = 0;
+        const edges = [];
+        const trafficLightsHit = [];
+        let timeAtNode = currentTime;
+
+        for (let i = 0; i < path.length - 1; i++) {
+            const fromNode = path[i];
+            const toNode = path[i + 1];
+            const neighbors = this.graph.getNeighbors(fromNode);
+            let edgeData = null;
+
+            for (const n of neighbors) {
+                if (n.to === toNode) { edgeData = n; break; }
+            }
+
+            if (edgeData) {
+                const edgeCost = this.graph.getEdgeCost(fromNode, toNode, timeAtNode);
+                edges.push({
+                    from: fromNode,
+                    to: toNode,
+                    distance: edgeData.length || 0,
+                    travelTime: edgeCost
+                });
+                totalDistance += edgeData.length || 0;
+                totalTime += edgeCost;
+                timeAtNode += edgeCost;
+
+                if (this.graph.trafficLights[toNode]) {
+                    trafficLightsHit.push({
+                        node: toNode,
+                        arrivalTime: timeAtNode,
+                        waitTime: edgeCost - edgeData.weight
+                    });
+                }
+            }
+        }
+
+        return { totalDistance, totalTime, edges, trafficLightsHit };
+    }
 }

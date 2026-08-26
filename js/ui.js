@@ -150,6 +150,53 @@ const UI = {
         document.getElementById('sim-speed-select').addEventListener('change', (e) => {
             Simulation.speedMultiplier = parseFloat(e.target.value);
         });
+
+        document.getElementById('tl-search-input').addEventListener('input', () => this.renderTrafficLightsList());
+        document.querySelectorAll('.state-filter-pills .pill').forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                document.querySelectorAll('.state-filter-pills .pill').forEach(p => p.classList.remove('active'));
+                e.target.classList.add('active');
+                this.renderTrafficLightsList();
+            });
+        });
+
+        document.getElementById('tl-set-red').addEventListener('click', () => this._setTrafficLightState('red'));
+        document.getElementById('tl-set-yellow').addEventListener('click', () => this._setTrafficLightState('yellow'));
+        document.getElementById('tl-set-green').addEventListener('click', () => this._setTrafficLightState('green'));
+        document.getElementById('tl-save-timing').addEventListener('click', () => this._saveTrafficLightTiming());
+        document.getElementById('tl-reset').addEventListener('click', () => this._resetTrafficLight());
+        document.getElementById('tl-close-btn').addEventListener('click', () => {
+            document.getElementById('tl-control-panel').style.display = 'none';
+            this.selectedTrafficLight = null;
+        });
+
+        document.getElementById('save-all-btn').addEventListener('click', () => {
+            const btn = document.getElementById('save-all-btn');
+            btn.disabled = true;
+            this.app.traffic.save();
+            btn.innerHTML = '<i class="ri-check-line"></i> Saved!';
+            setTimeout(() => { btn.innerHTML = '<i class="ri-save-3-line"></i> Save All'; btn.disabled = false; }, 2000);
+        });
+
+        document.getElementById('randomize-btn').addEventListener('click', () => {
+            const btn = document.getElementById('randomize-btn');
+            btn.disabled = true;
+            this.app.traffic.randomize();
+            btn.innerHTML = '<i class="ri-check-line"></i> Done!';
+            setTimeout(() => { btn.innerHTML = '<i class="ri-shuffle-line"></i> Randomize'; btn.disabled = false; }, 1500);
+            if (this.startPoint && this.endPoint) this.findRoute();
+        });
+
+        document.getElementById('reset-all-btn').addEventListener('click', () => {
+            const btn = document.getElementById('reset-all-btn');
+            btn.disabled = true;
+            this.app.traffic.resetAll();
+            btn.innerHTML = '<i class="ri-check-line"></i> Done!';
+            setTimeout(() => { btn.innerHTML = '<i class="ri-history-line"></i> Reset All'; btn.disabled = false; }, 1500);
+            if (this.startPoint && this.endPoint) this.findRoute();
+        });
+
+        document.addEventListener('signal-click', (e) => this.selectTrafficLight(e.detail));
     },
 
     _showAuthTab(tab) {
@@ -345,5 +392,101 @@ const UI = {
         const textEl = document.getElementById('ws-status-text');
         if (statusEl) statusEl.className = 'status-dot ' + status;
         if (textEl) textEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    },
+
+    renderTrafficLightsList(latestStates) {
+        const container = document.getElementById('traffic-lights');
+        const searchVal = document.getElementById('tl-search-input').value.toLowerCase();
+        const activePill = document.querySelector('.state-filter-pills .pill.active');
+        const filterState = activePill ? activePill.getAttribute('data-filter') : 'all';
+        const tls = Object.values(latestStates || {});
+
+        if (!tls.length) {
+            container.innerHTML = '<p class="placeholder">Waiting for traffic data...</p>';
+            return;
+        }
+
+        const filtered = tls.filter(tl => {
+            const nameMatch = (tl.name || tl.id).toLowerCase().includes(searchVal);
+            if (!nameMatch) return false;
+            if (filterState === 'all') return true;
+            if (filterState === 'manual') return tl.isManual;
+            return tl.state === filterState;
+        });
+
+        if (!filtered.length) {
+            container.innerHTML = '<p class="placeholder">No signals match filter.</p>';
+            return;
+        }
+
+        let html = '';
+        for (const tl of filtered) {
+            const manualBadge = tl.isManual ? '<span class="manual-tag">MANUAL</span>' : '';
+            html += `
+                <div class="tl-item-card" data-id="${tl.id}">
+                    <div class="tl-item-left">
+                        <div class="tl-status-dot ${tl.state}"></div>
+                        <div>
+                            <div class="tl-item-name">${tl.name || tl.id} ${manualBadge}</div>
+                            <div class="tl-item-countdown">${tl.state.toUpperCase()} &bull; ${tl.timeRemaining}s remaining</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm tl-control-btn">Control</button>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+
+        container.querySelectorAll('.tl-control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.closest('.tl-item-card')?.getAttribute('data-id');
+                const tl = tls.find(t => t.id === id);
+                if (tl) this.selectTrafficLight(tl);
+            });
+        });
+
+        document.getElementById('metric-total-nodes').textContent = tls.length;
+        document.getElementById('metric-active-signals').textContent = tls.length;
+    },
+
+    selectTrafficLight(tl) {
+        this.selectedTrafficLight = tl;
+        document.getElementById('tl-control-panel').style.display = 'block';
+        document.getElementById('tl-control-id').textContent = tl.name || tl.id;
+        document.getElementById('tl-green-time').value = tl.greenTime || 30;
+        document.getElementById('tl-yellow-time').value = tl.yellowTime || 5;
+        document.getElementById('tl-red-time').value = tl.redTime || 25;
+
+        document.querySelectorAll('.tl-color-btn').forEach(btn => btn.classList.remove('active'));
+        const stateBtn = document.getElementById(`tl-set-${tl.state}`);
+        if (stateBtn) stateBtn.classList.add('active');
+
+        MapManager.panTo(tl.lat, tl.lon);
+    },
+
+    _setTrafficLightState(state) {
+        if (!this.selectedTrafficLight) return;
+        this.app.traffic.updateSignal(this.selectedTrafficLight.id, { state });
+        document.querySelectorAll('.tl-color-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`tl-set-${state}`).classList.add('active');
+        if (this.startPoint && this.endPoint) this.findRoute();
+    },
+
+    _saveTrafficLightTiming() {
+        if (!this.selectedTrafficLight) return;
+        this.app.traffic.updateSignal(this.selectedTrafficLight.id, {
+            green_time: parseInt(document.getElementById('tl-green-time').value),
+            yellow_time: parseInt(document.getElementById('tl-yellow-time').value),
+            red_time: parseInt(document.getElementById('tl-red-time').value)
+        });
+        if (this.startPoint && this.endPoint) this.findRoute();
+    },
+
+    _resetTrafficLight() {
+        if (!this.selectedTrafficLight) return;
+        this.app.traffic.resetSignal(this.selectedTrafficLight.id);
+        document.getElementById('tl-control-panel').style.display = 'none';
+        this.selectedTrafficLight = null;
+        if (this.startPoint && this.endPoint) this.findRoute();
     }
 };

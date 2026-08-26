@@ -49,4 +49,25 @@ class RoadGraph {
             }
         }
     }
+
+    getNode(id) {
+        return this.nodes[id] || null;
+    }
+
+    getNeighbors(id) {
+        return this.edges[id] || [];
+    }
+
+    findNearestNode(lat, lon) {
+        let minDist = Infinity;
+        let nearest = null;
+        for (const [id, node] of Object.entries(this.nodes)) {
+            const dist = Utils.haversine(lat, lon, node.lat, node.lon);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = id;
+            }
+        }
+        return nearest;
+    }
 }

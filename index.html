@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TraffIQ - Smart Signal Timing &amp; Route Optimizer</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="" crossorigin="" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <!-- ======================== LANDING PAGE ======================== -->
+    <div id="landing-page" class="view-section active">
+        <header class="landing-header">
+            <div class="brand">
+                <div class="brand-icon"><i class="ri-pulse-line"></i></div>
+                <span class="brand-name">Traff<span class="highlight">IQ</span></span>
+            </div>
+            <nav class="landing-nav">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#simulator">Simulator</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <div class="landing-auth-btns" id="landing-auth-btns">
+                <button class="btn btn-outline" id="btn-open-login">Sign In</button>
+                <button class="btn btn-primary" id="btn-open-signup">Get Started</button>
+            </div>
+            <div class="user-widget landing-user-widget" id="landing-user-widget" style="display: none;">
+                <div class="user-avatar" id="landing-user-avatar">?</div>
+                <span class="user-name" id="landing-user-name"></span>
+                <button class="btn btn-primary btn-sm" id="btn-landing-dashboard"><i class="ri-dashboard-2-line"></i> Dashboard</button>
+                <button class="btn-icon btn-logout" id="btn-landing-logout" title="Sign Out"><i class="ri-logout-box-r-line"></i></button>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Signal Timing.<br><span class="gradient-text">Route Precision.</span></h1>
+                <p class="hero-subtitle">
+                    Real-time traffic signal synchronization with time-dependent Dijkstra routing. Minimize intersection delays. Optimize every commute.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-lg" id="btn-hero-login">Get Started</button>
+                    <button class="btn btn-secondary btn-lg" id="btn-hero-signup">Create Account</button>
+                    <button class="btn btn-primary btn-lg" id="btn-hero-dashboard" style="display: none;"><i class="ri-dashboard-2-line"></i> Open Dashboard</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-val">40+</div>
+                        <div class="stat-lbl">Managed Signals</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">&lt; 50ms</div>
+                        <div class="stat-lbl">Route Calculation</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">32%</div>
+                        <div class="stat-lbl">Delay Reduction</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-image-wrapper">
+                    <img src="./traffic_hero.png" alt="Smart Traffic Control" class="hero-img">
+                    <div class="hero-image-overlay"></div>
+                    <div class="floating-badge badge-top-left">
+                        <span class="dot green"></span>
+                        <div>
+                            <div class="badge-title">40 Signals Synced</div>
+                            <div class="badge-sub">Live Simulation Stream</div>
+                        </div>
+                    </div>
+                    <div class="floating-badge badge-bottom-right">
+                        <i class="ri-flashlight-line text-cyan"></i>
+                        <div>
+                            <div class="badge-title">Dynamic Optimization</div>
+                            <div class="badge-sub">Time-Dependent Dijkstra</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Banner -->
+        <section class="stats-banner">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">40</div>
+                    <div class="stat-label">Intersections Managed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">&lt;50ms</div>
+                    <div class="stat-label">Route Computation</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">32%</div>
+                    <div class="stat-label">Average Delay Reduction</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features-section" id="features">
+            <h2 class="section-title">Built for Urban Traffic Intelligence</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon red"><i class="ri-traffic-light-line"></i></div>
+                    <h3>Dynamic Signal Sync</h3>
+                    <p>Real-time simulation synchronizes live signal state countdowns, green phase durations, and offset phases.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue"><i class="ri-route-line"></i></div>
+                    <h3>Time-Dependent Dijkstra</h3>
+                    <p>Computes optimal paths using dynamic wait-time matrices at intersections based on precise arrival timestamps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green"><i class="ri-sliders-line"></i></div>
+                    <h3>Manual Signal Override</h3>
+                    <p>Instantly override individual signal colors, modify phase timings, or randomize the entire network.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple"><i class="ri-steering-2-line"></i></div>
+                    <h3>Live Trajectory Playback</h3>
+                    <p>Animate virtual vehicles along calculated routes with real-time signal detection and stopping behavior.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="workflow-section" id="how-it-works">
+            <h2 class="section-title">How TraffIQ Optimizes City Travel</h2>
+            <div class="workflow-steps">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <div class="step-icon"><i class="ri-map-pin-user-line"></i></div>
+                    <h3>Plot Waypoints</h3>
+                    <p>Select origin and destination across the road network using interactive presets or custom map coordinates.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <div class="step-icon"><i class="ri-timer-flash-line"></i></div>
+                    <h3>Sync Signal Phases</h3>
+                    <p>Fetch active green, yellow, and red cycle lengths along with arrival time offsets across all 40 intersections.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <div class="step-icon"><i class="ri-speed-up-line"></i></div>
+                    <h3>Compute &amp; Navigate</h3>
+                    <p>Calculate minimal-delay routes using dynamic time-dependent costs and track vehicle trajectories live.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulator Widget -->
+        <section class="simulator-section" id="simulator">
+            <div class="sim-widget-card">
+                <div class="sim-widget-header">
+                    <h2><i class="ri-dashboard-2-line"></i> Signal Timing Calculator</h2>
+                    <p>Adjust signal durations to see predicted intersection throughput in real-time.</p>
+                </div>
+                <div class="sim-widget-grid">
+                    <div class="sim-controls-side">
+                        <div class="sim-slider-group">
+                            <label>Green Light Duration: <span id="landing-sim-green-val">30</span>s</label>
+                            <input type="range" id="landing-sim-green" min="10" max="60" value="30">
+                        </div>
+                        <div class="sim-slider-group">
+                            <label>Red Light Duration: <span id="landing-sim-red-val">25</span>s</label>
+                            <input type="range" id="landing-sim-red" min="10" max="60" value="25">
+                        </div>
+                    </div>
+                    <div class="sim-metrics-side">
+                        <div class="sim-result-box">
+                            <span class="sim-res-val" id="landing-sim-throughput">720</span>
+                            <span class="sim-res-lbl">Vehicles / Hour Throughput</span>
+                        </div>
+                        <div class="sim-result-box">
+                            <span class="sim-res-val" id="landing-sim-wait">12.5s</span>
+                            <span class="sim-res-lbl">Avg Intersection Delay</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section">
+            <h2 class="section-title">What Operators Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Same crew, same time, every week. Six months in and I haven't skipped once. That's a first for me."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">DP</div>
+                        <div>
+                            <div class="testimonial-name">Daniel P.</div>
+                            <div class="testimonial-role">Traffic Operations Lead</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Started for the routing engine. Stayed for the real-time signal override. The dashboard never sleeps."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MD</div>
+                        <div>
+                            <div class="testimonial-name">Mark D.</div>
+                            <div class="testimonial-role">City Infrastructure Engineer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The time-dependent Dijkstra alone saved us 32% in commute delays. Nothing else has come close."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">OR</div>
+                        <div>
+                            <div class="testimonial-name">Olivia R.</div>
+                            <div class="testimonial-role">Urban Planning Analyst</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The decisions are already made. Set the signals, compute the route, track the vehicles. Best tool we've deployed."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div>
+                            <div class="testimonial-name">Sarah M.</div>
+                            <div class="testimonial-role">Municipal Traffic Director</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"I'm not a programmer. But the trajectory playback and live monitoring? I'm a power user now."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">PS</div>
+                        <div>
+                            <div class="testimonial-name">Priya S.</div>
+                            <div class="testimonial-role">Signal Timing Specialist</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Felt like deploying a real traffic system. I didn't know how much I missed that until I had it back."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">TW</div>
+                        <div>
+                            <div class="testimonial-name">Tyler W.</div>
+                            <div class="testimonial-role">Smart City Consultant</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="faq-section" id="faq">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is Time-Dependent Dijkstra Routing?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Unlike standard shortest-path algorithms that assume static edge weights, Time-Dependent Dijkstra adjusts road travel costs based on exact arrival timestamps at traffic signals. This accounts for real wait times at each intersection.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does TraffIQ simulate traffic signals?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        TraffIQ uses an in-browser simulation engine that computes live signal state countdowns, phase offsets, and vehicle locations every second. All 40 intersections cycle through green, yellow, and red phases with configurable timings.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can operators manually override signals?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes. Operators can force any signal to Red, Yellow, or Green, modify phase cycle timings, randomize all network signals, or trigger a full reset to defaults.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Does the route recalculate after signal changes?</span>
+                        <i class="ri-add-line faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Yes. Any signal override or timing change automatically triggers a route recalculation when a route is active, ensuring the optimal path always reflects the current network state.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <div class="footer-content">
+                <div class="brand">
+                    <div class="brand-icon"><i class="ri-pulse-line"></i></div>
+                    <span class="brand-name">Traff<span class="highlight">IQ</span></span>
+                </div>
+                <p class="footer-desc">Intelligent Signal Timing &amp; Dynamic Urban Route Optimization Engine.</p>
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div class="footer-copy">&copy; 2026 TraffIQ Systems. All rights reserved.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ======================== AUTH DIALOG ======================== -->
+    <dialog id="auth-dialog" class="glass-dialog">
+        <div class="dialog-content">
+            <button class="dialog-close" id="btn-close-auth">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Sign In</button>
+                <button class="auth-tab" data-tab="signup">Create Account</button>
+            </div>
+            <form id="form-login" class="auth-form active">
+                <h3>Welcome back to TraffIQ</h3>
+                <p class="auth-desc">Sign in to access your traffic control dashboard.</p>
+                <div class="input-group">
+                    <label for="login-email">Email</label>
+                    <input type="text" id="login-email" placeholder="operator@traffiq.io" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me" checked> Remember session
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                <p class="form-error" id="login-error" role="alert"></p>
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            </form>
+            <form id="form-signup" class="auth-form">
+                <h3>Create TraffIQ Account</h3>
+                <p class="auth-desc">Start optimizing traffic signals with smart routing.</p>
+                <div class="input-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Your name" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="At least 6 characters" minlength="6" required>
+                </div>
+                <p class="form-error" id="signup-error" role="alert"></p>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- ======================== DASHBOARD ======================== -->
+    <div id="app-dashboard" class="view-section">
+        <header class="app-header">
+            <div class="header-left">
+                <button class="btn-icon" id="btn-home" title="Back to Home"><i class="ri-home-4-line"></i></button>
+                <div class="brand compact">
+                    <div class="brand-icon"><i class="ri-pulse-line"></i></div>
+                    <span class="brand-name">Traff<span class="highlight">IQ</span></span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="ws-status-badge">
+                    <span class="status-dot connecting" id="ws-status"></span>
+                    <span id="ws-status-text">Connecting</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-widget" id="user-widget">
+                    <div class="user-avatar" id="user-avatar">G</div>
+                    <span class="user-name" id="user-name-display">Guest Operator</span>
+                    <button class="btn-icon btn-logout" id="btn-logout" title="Sign Out"><i class="ri-logout-box-r-line"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <div class="workspace-container">
+            <div id="map"></div>
+
+            <aside class="sidebar-container" id="sidebar">
+                <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle Panel">
+                    <i class="ri-arrow-right-s-line"></i>
+                </button>
+
+                <nav class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="route"><i class="ri-route-line"></i> Route</button>
+                    <button class="tab-btn" data-tab="signals"><i class="ri-traffic-light-line"></i> Signals</button>
+                    <button class="tab-btn" data-tab="analytics"><i class="ri-bar-chart-2-line"></i> Metrics</button>
+                </nav>
+
+                <div class="tab-contents">
+                    <!-- TAB: ROUTE -->
+                    <div class="tab-pane active" id="tab-route">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-map-pin-2-line"></i> Route Selection</h3>
+                            </div>
+                            <div class="preset-selector-group">
+                                <label for="location-preset">Quick Presets</label>
+                                <select id="location-preset" class="form-select">
+                                    <option value="" disabled selected>Select a route preset</option>
+                                    <option value="sec17-sec43">Sector 17 Plaza &#10132; Sector 43 ISBT</option>
+                                    <option value="pgi-airport">PGI Hospital &#10132; Airport Road</option>
+                                    <option value="sec35-sec22">Sector 35 Market &#10132; Sector 22 Market</option>
+                                    <option value="sec1-sec36">Sector 1 Secretariat &#10132; Sector 36</option>
+                                </select>
+                            </div>
+                            <div class="location-inputs">
+                                <div class="location-box start">
+                                    <div class="loc-badge">S</div>
+                                    <div class="loc-details">
+                                        <div class="loc-title">Start Location</div>
+                                        <div class="loc-coords" id="start-coords">Click map or choose preset</div>
+                                    </div>
+                                </div>
+                                <div class="location-box end">
+                                    <div class="loc-badge">E</div>
+                                    <div class="loc-details">
+                                        <div class="loc-title">Destination</div>
+                                        <div class="loc-coords" id="end-coords">Click map or choose preset</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button id="find-route-btn" class="btn btn-primary" disabled>
+                                    <i class="ri-navigation-line"></i> Find Optimal Route
+                                </button>
+                                <button id="clear-btn" class="btn btn-secondary">
+                                    <i class="ri-refresh-line"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="panel-card" id="sim-controls-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-steering-2-line"></i> Vehicle Playback</h3>
+                            </div>
+                            <div class="sim-playback-row">
+                                <button id="btn-sim-play" class="btn btn-accent btn-sm" disabled>
+                                    <i class="ri-play-line"></i> Start Vehicle
+                                </button>
+                                <button id="btn-sim-reset" class="btn btn-outline btn-sm" disabled>
+                                    <i class="ri-restart-line"></i> Reset
+                                </button>
+                                <div class="sim-speed-box">
+                                    <span>Speed:</span>
+                                    <select id="sim-speed-select" class="form-select-sm">
+                                        <option value="1">1x</option>
+                                        <option value="2" selected>2x</option>
+                                        <option value="4">4x</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="sim-status-banner" id="sim-status-text">
+                                Select start &amp; destination to enable vehicle playback.
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-information-line"></i> Route Analytics</h3>
+                            </div>
+                            <div id="route-info">
+                                <p class="placeholder">Click on map or select preset to calculate route.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: SIGNALS -->
+                    <div class="tab-pane" id="tab-signals">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-traffic-light-line"></i> Live Signals</h3>
+                            </div>
+                            <div class="filter-controls">
+                                <div class="search-box">
+                                    <i class="ri-search-line"></i>
+                                    <input type="text" id="tl-search-input" placeholder="Filter by sector...">
+                                </div>
+                                <div class="state-filter-pills">
+                                    <button class="pill active" data-filter="all">All</button>
+                                    <button class="pill red" data-filter="red">Red</button>
+                                    <button class="pill green" data-filter="green">Green</button>
+                                    <button class="pill manual" data-filter="manual">Manual</button>
+                                </div>
+                            </div>
+                            <div id="traffic-lights" class="tl-scroll-list">
+                                <p class="placeholder">Waiting for traffic data...</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-card" id="tl-control-panel" style="display: none;">
+                            <div class="panel-header">
+                                <h3>Override: <span id="tl-control-id" class="highlight"></span></h3>
+                                <button class="btn-icon-sm" id="tl-close-btn">&times;</button>
+                            </div>
+                            <div class="tl-controls">
+                                <div class="label-sm">Force State:</div>
+                                <div class="tl-color-buttons">
+                                    <button id="tl-set-red" class="tl-color-btn red">Red</button>
+                                    <button id="tl-set-yellow" class="tl-color-btn yellow">Yellow</button>
+                                    <button id="tl-set-green" class="tl-color-btn green">Green</button>
+                                </div>
+                                <div class="label-sm margin-top-sm">Cycle Durations (Seconds):</div>
+                                <div class="tl-timing-grid">
+                                    <div class="timing-field">
+                                        <label>Green</label>
+                                        <input type="number" id="tl-green-time" min="1" max="120" value="30">
+                                    </div>
+                                    <div class="timing-field">
+                                        <label>Yellow</label>
+                                        <input type="number" id="tl-yellow-time" min="1" max="30" value="5">
+                                    </div>
+                                    <div class="timing-field">
+                                        <label>Red</label>
+                                        <input type="number" id="tl-red-time" min="1" max="120" value="25">
+                                    </div>
+                                </div>
+                                <div class="tl-actions">
+                                    <button id="tl-save-timing" class="btn btn-primary btn-sm"><i class="ri-save-line"></i> Save</button>
+                                    <button id="tl-reset" class="btn btn-secondary btn-sm"><i class="ri-restart-line"></i> Auto</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-settings-4-line"></i> Bulk Operations</h3>
+                            </div>
+                            <div class="bulk-buttons">
+                                <button id="save-all-btn" class="btn btn-success btn-sm"><i class="ri-save-3-line"></i> Save All</button>
+                                <button id="randomize-btn" class="btn btn-warning btn-sm"><i class="ri-shuffle-line"></i> Randomize</button>
+                                <button id="reset-all-btn" class="btn btn-danger btn-sm"><i class="ri-history-line"></i> Reset All</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: METRICS -->
+                    <div class="tab-pane" id="tab-analytics">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-dashboard-3-line"></i> System Performance</h3>
+                            </div>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <span class="m-val" id="metric-total-nodes">40</span>
+                                    <span class="m-lbl">Intersections</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="m-val" id="metric-active-signals">40</span>
+                                    <span class="m-lbl">Active Signals</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="m-val" id="metric-vehicles">10</span>
+                                    <span class="m-lbl">Tracked Vehicles</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="m-val text-green" id="metric-efficiency">94%</span>
+                                    <span class="m-lbl">Optimal Flow</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3><i class="ri-pie-chart-line"></i> Route Delay Analysis</h3>
+                            </div>
+                            <div class="delay-bar-container">
+                                <div class="delay-bar-legend">
+                                    <span><span class="dot-legend drive"></span> Drive Time</span>
+                                    <span><span class="dot-legend wait"></span> Signal Wait</span>
+                                </div>
+                                <div class="delay-progress-track">
+                                    <div class="delay-bar-segment drive" id="bar-drive-segment" style="width: 75%;"></div>
+                                    <div class="delay-bar-segment wait" id="bar-wait-segment" style="width: 25%;"></div>
+                                </div>
+                                <div class="delay-percentage-text" id="delay-summary-text">
+                                    Drive: 75% | Signal Delays: 25%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/routing.js"></script>
+    <script src="js/traffic.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/simulation.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

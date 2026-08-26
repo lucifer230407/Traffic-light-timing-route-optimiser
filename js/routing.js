@@ -120,4 +120,64 @@ class TimeDependentRouter {
         }
         return total;
     }
+
+    findKShortestPaths(startNode, endNode, currentTime = 0, k = 3) {
+        const A = [];
+        const B = [];
+
+        const { path, cost } = this.findShortestPath(startNode, endNode, currentTime);
+        if (!path.length) return [];
+        A.push({ path, cost });
+
+        for (let i = 1; i < k; i++) {
+            const prevPath = A[A.length - 1].path;
+
+            for (let j = 0; j < prevPath.length - 1; j++) {
+                const spurNode = prevPath[j];
+                const rootPath = prevPath.slice(0, j + 1);
+
+                const bannedEdges = new Set();
+                for (const existing of A) {
+                    if (existing.path.length > j + 1) {
+                        let match = true;
+                        for (let x = 0; x <= j; x++) {
+                            if (existing.path[x] !== rootPath[x]) { match = false; break; }
+                        }
+                        if (match) {
+                            bannedEdges.add(`${existing.path[j]}->${existing.path[j + 1]}`);
+                        }
+                    }
+                }
+
+                const bannedNodes = new Set(rootPath.slice(0, -1));
+                const rootTime = this._pathCost(rootPath, currentTime);
+                if (rootTime === Infinity) continue;
+
+                const { path: spurPath } = this._shortestPathAvoiding(
+                    spurNode, endNode, currentTime + rootTime, bannedNodes, bannedEdges
+                );
+
+                if (spurPath.length) {
+                    const totalPath = rootPath.slice(0, -1).concat(spurPath);
+                    const knownPaths = new Set([
+                        ...A.map(p => p.path.join(',')),
+                        ...B.map(p => p.path.join(','))
+                    ]);
+                    const key = totalPath.join(',');
+                    if (!knownPaths.has(key)) {
+                        const totalCost = this._pathCost(totalPath, currentTime);
+                        if (totalCost !== Infinity) {
+                            B.push({ path: totalPath, cost: totalCost });
+                        }
+                    }
+                }
+            }
+
+            if (!B.length) break;
+            B.sort((a, b) => a.cost - b.cost);
+            A.push(B.shift());
+        }
+
+        return A;
+    }
 }

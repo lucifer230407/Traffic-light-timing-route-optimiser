@@ -21,44 +21,54 @@ Real-time traffic signal synchronization with time-dependent Dijkstra routing. M
 
 | Layer | Technology |
 |-------|-----------|
-| Map | [Leaflet.js](https://leafletjs.com/) with CARTO dark tiles |
+| Map | [Leaflet.js](https://leafletjs.com/) with [OpenStreetMap](https://www.openstreetmap.org/) tiles |
 | Routing | Custom time-dependent Dijkstra + Yen's K-shortest paths |
 | UI | Vanilla JS, Remix Icons, Google Fonts (Inter + Outfit) |
-| Persistence | localStorage |
+| Backend | Node.js, Express, MongoDB Atlas, Mongoose |
+| Authentication | bcrypt password hashing, JWT bearer tokens |
+| Persistence | MongoDB (user accounts and per-user signal settings) |
 
 ## Getting Started
 
-### Prerequisites
-
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- No server or build tools required
-
 ### Run Locally
+
+1. Install Node.js 20+ and create a MongoDB Atlas database.
+2. Configure the API environment:
 
 ```bash
 git clone https://github.com/lucifer230407/Traffic-light-timing-route-optimiser.git
-cd Traffic-light-timing-route-optimiser
-open index.html
+cd Traffic-light-timing-route-optimiser/backend
+cp .env.example .env
+# Set MONGODB_URI and a random JWT_SECRET (at least 32 characters) in .env
+npm install
+npm start
 ```
+
+Open `http://localhost:3000`. The Express server serves the frontend and API on the same origin. Do not open `frontend/index.html` directly as a file.
 
 ## Project Structure
 
 ```
-traffiq/
-├── index.html            # Landing page, auth dialog, dashboard
-├── css/
-│   └── style.css         # Full dark theme design system
-├── js/
-│   ├── utils.js          # Haversine distance, clamp utility
-│   ├── graph.js          # Road network graph with 40-node grid
-│   ├── routing.js        # Time-dependent Dijkstra + K-shortest paths
-│   ├── traffic.js        # Traffic signal simulation engine
-│   ├── simulation.js     # Vehicle trajectory playback
-│   ├── map.js            # Leaflet map visualization
-│   ├── ui.js             # Dashboard UI event handling
-│   ├── auth.js           # User authentication (localStorage)
-│   └── app.js            # Application entry point
-└── traffic_hero.png      # Hero image asset
+├── frontend/               # Existing static web application
+│   ├── index.html
+│   ├── css/
+│   ├── js/
+│   │   ├── api.js          # API client
+│   │   ├── auth.js         # JWT login/signup client
+│   │   └── ...
+│   └── traffic_hero.png
+├── backend/
+│   ├── src/
+│   │   ├── config/         # MongoDB connection
+│   │   ├── controllers/    # Auth and signal logic
+│   │   ├── middleware/     # JWT authentication
+│   │   ├── models/         # Mongoose schemas
+│   │   ├── routes/         # REST endpoints
+│   │   ├── app.js
+│   │   └── server.js
+│   └── test/
+├── postman/TraffIQ.postman_collection.json
+└── render.yaml
 ```
 
 ## Dashboard
@@ -71,7 +81,31 @@ The dashboard provides three tabs:
 
 ## Authentication
 
-User accounts are stored in localStorage with SHA-256 password hashing. Supports signup, login, session persistence, and logout.
+Account records and bcrypt-hashed passwords are stored in MongoDB. Signup and login return a seven-day JWT; the browser stores the token for authenticated API requests. Each signed-in user has their own MongoDB traffic signal settings.
+
+## API
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/health` | Deployment health check |
+| POST | `/api/auth/signup` | Create an account and return a JWT |
+| POST | `/api/auth/login` | Sign in and return a JWT |
+| GET | `/api/auth/me` | Return the authenticated account |
+| GET | `/api/signals` | Load this account's saved signal settings |
+| PUT | `/api/signals` | Save this account's signal settings |
+| GET | `/api/signals/:id` | Get one saved signal for this account |
+| PATCH | `/api/signals/:id` | Update a signal's position or timing |
+| DELETE | `/api/signals/:id` | Delete one saved signal for this account |
+
+Protected endpoints require `Authorization: Bearer <token>`. Request bodies and signal timing values are validated by the API.
+
+## Deploy and test
+
+The repository includes a Render Blueprint in `render.yaml`. In Render, create a Blueprint from this existing GitHub repository, provide `MONGODB_URI` from MongoDB Atlas, and deploy. Render generates `JWT_SECRET`; the service serves both the frontend and `/api` from the same deployed URL. In MongoDB Atlas, allow the Render service to connect to the cluster (use network access rules appropriate for your deployment).
+
+Import `postman/TraffIQ.postman_collection.json` into Postman, set `baseUrl`, then run **Sign up** (or **Log in** if the test account already exists) to store a JWT. For the individual signal demo, run **Save signal settings**, **Get one signal**, **Update one signal position**, then **Delete one signal**. These protected requests use the collection's `signalId` variable (default `s1`) and only access the signed-in user's saved settings. The browser uses the same-origin `/api` URL; if hosting the frontend separately, define `window.TRAFFIQ_API_URL` before `js/api.js` and set `CLIENT_ORIGIN` on the API service to the exact frontend origin.
+
+Run backend checks with `cd backend && npm test`.
 
 ## Team
 

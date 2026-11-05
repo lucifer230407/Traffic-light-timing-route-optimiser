@@ -1,0 +1,148 @@
+{
+  "info": {
+    "name": "TraffIQ API",
+    "description": "Health, account, and persisted traffic signal settings API checks. Set baseUrl to the deployed service URL, then run Signup or Login before protected requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" },
+    { "key": "testEmail", "value": "operator@example.com" },
+    { "key": "testPassword", "value": "change-this-password" },
+    { "key": "signalId", "value": "s1" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/health" },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('API is healthy', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Sign up",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"name\":\"Traffic Operator\",\"email\":\"{{testEmail}}\",\"password\":\"{{testPassword}}\"}" },
+        "url": "{{baseUrl}}/api/auth/signup"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Account created or already exists', function () { pm.expect([201, 409]).to.include(pm.response.code); });",
+            "if (pm.response.code === 201) pm.collectionVariables.set('token', pm.response.json().token);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Log in",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"email\":\"{{testEmail}}\",\"password\":\"{{testPassword}}\"}" },
+        "url": "{{baseUrl}}/api/auth/login"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Login succeeds', function () { pm.response.to.have.status(200); });",
+            "pm.collectionVariables.set('token', pm.response.json().token);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Current account",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/auth/me"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Authenticated account is returned', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Get signal settings",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/signals"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Signal settings are returned', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Save signal settings",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"signals\":[{\"id\":\"s1\",\"lat\":30.749,\"lon\":76.77,\"cycle\":[30,5,25,5],\"phaseOffset\":0,\"isManual\":false,\"manualState\":null}]}"
+        },
+        "url": "{{baseUrl}}/api/signals"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Signal settings are persisted', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Get one signal",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/signals/{{signalId}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('One saved signal is returned', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().signal.id).to.eql(pm.collectionVariables.get('signalId')); });"] }
+      }]
+    },
+    {
+      "name": "Update one signal position",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"lat\":30.75,\"lon\":76.78}"
+        },
+        "url": "{{baseUrl}}/api/signals/{{signalId}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Signal position is updated', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().signal.lat).to.eql(30.75); });"] }
+      }]
+    },
+    {
+      "name": "Delete one signal",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/signals/{{signalId}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Signal is deleted', function () { pm.response.to.have.status(200); });"] }
+      }]
+    }
+  ]
+}
